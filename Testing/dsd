@@ -1,0 +1,91 @@
+      count: function (params) {
+
+        var defer = $q.defer();
+
+        var query = new Parse.Query(this);
+
+        if (params.status) {
+          if (params.status === 'inappropriate') {
+            query.equalTo('isInappropriate', true);
+          }
+          if (params.userData && params.userData!== null) {
+            query.equalTo('userData', params.userData);
+          }
+          if (params.placeId && params.placeId!== null) {
+            query.equalTo('placeId', params.placeId);
+          }
+          if (params.status === 'appropriate') {
+            query.equalTo('isInappropriate', false);
+          }
+        }
+
+        query.count({
+          success: function (count) {
+            defer.resolve(count);
+          },
+          error: function (error) {
+            defer.reject(error);
+          }
+        });
+
+
+
+        return defer.promise;
+
+      },
+
+
+      all: function (params) {
+
+        // console.log('kdkdkdkkdkdkdk');
+
+        var defer = $q.defer();
+
+
+        var query = new Parse.Query(this);
+
+
+
+        if (params.status) {
+          if (params.status === 'inappropriate') {
+            query.equalTo('isInappropriate', true);
+          }
+          if (params.userData && params.userData!== null) {
+            query.equalTo('userData', params.userData);
+          }
+          if (params.placeId && params.placeId!== null) {
+            query.equalTo('placeId', params.placeId);
+          }
+          if (params.status === 'appropriate') {
+            query.equalTo('isInappropriate', false);
+          }
+        }
+
+        query.include("userData");
+        query.include("placeId");
+        query.descending('createdAt');
+        query.include("Place");
+        //
+        //query.include(['User', 'place']);
+        query.limit(params.limit);
+        query.skip((params.page * params.limit) - params.limit);
+        query.find({
+          success: function (imagesuggestionss) {
+            // var mm = imagesuggestionss[0].get("userData");
+            // console.log(mm);
+            // // var mmm = mm.get("name");
+            // // console.log(mmm);
+            // console.log((imagesuggestionss));
+
+            defer.resolve(imagesuggestionss);
+          },
+          error: function (error) {
+            defer.reject(error);
+          }
+        });
+
+        return defer.promise;
+
+      },
+
+
